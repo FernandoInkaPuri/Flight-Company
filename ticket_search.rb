@@ -14,23 +14,35 @@ route_origin = gets.chomp
 puts "Qual é o aeroporto de destino? "
 route_destiny = gets.chomp
 
-while true
+def date_valid?(date)
   begin
-    puts "Digite a data que deseja viajar (exemplo: 25/01/2025):"
-    departure_date = Date.parse(gets.chomp)
-    break
+    Date.parse(date)
+    true
   rescue
+    false
+  end
+end
+
+while true
+  puts "Digite a data que deseja viajar (exemplo: 25/01/2025):"
+
+  departure_date = gets.chomp.gsub(' ','')
+
+  if date_valid?(departure_date)
+    break
+  else
     puts "Informação inválida. Por favor digite uma data!"
   end
 end
 
-
 while true
-  begin
-    puts "Digite a data de retorno: (exemplo: 10/03/2025)"
-    return_date = Date.parse(gets.chomp)
+  puts "Digite a data de retorno: (exemplo: 10/03/2025)"
+
+  return_date = gets.chomp.gsub(' ','')
+
+  if date_valid?(return_date)
     break
-  rescue
+  else
     puts "Informação inválida. Por favor digite uma data!"
   end
 end
@@ -38,8 +50,6 @@ end
 puts "Os dados para busca da passagem são:
   Aeroporto de origem: #{route_origin}
   Aeroporto de destino: #{route_destiny}
-  Data de Partida: #{departure_date.strftime('%d/%m/%Y')}
-  Data de Retorno: #{return_date.strftime('%d/%m/%Y')}
+  Data de Partida: #{departure_date}
+  Data de Retorno: #{return_date}
 "
-
-# TODO validate_date method
