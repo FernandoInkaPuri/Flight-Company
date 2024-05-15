@@ -36,9 +36,11 @@ while true
 end
 
 while true
-  puts "Digite a data de retorno: (exemplo: 10/03/2025)"
+  puts "Digite a data de retorno (exemplo: 10/03/2025). Caso não queira pesquisar passagens "\
+  "para a volta, apenas digite enter:"
 
   return_date = gets.chomp.gsub(' ','')
+  break if return_date.empty?
 
   if date_valid?(return_date)
     break
@@ -51,5 +53,5 @@ puts "Os dados para busca da passagem são:
   Aeroporto de origem: #{route_origin}
   Aeroporto de destino: #{route_destiny}
   Data de Partida: #{departure_date}
-  Data de Retorno: #{return_date}
+  Data de Retorno: #{return_date.empty? ? "Não informado": return_date}
 "
