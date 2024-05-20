@@ -63,6 +63,8 @@ end
 
 class TicketSearchTest < Test::Unit::TestCase
   def test_valid_date
+    # typed_date = StringIO.new("one\ntwo\n")
+
     date = TicketSearch.date_valid?('09/02/1998')
 
     assert_equal(true, date)
@@ -76,5 +78,29 @@ class TicketSearchTest < Test::Unit::TestCase
     assert_equal(false, nonexistent_date)
     assert_equal(false, typed_text)
     assert_equal(false, typed_number)
+  end
+
+  def test_input_values
+    name = 'Fernando'
+    route_origin = 'GRU'
+    route_destiny = 'JPN'
+    departure_date = '01/03/2025'
+    return_date = '01/03/2026'
+
+    File.write("respostas.txt", "#{name}\n#{route_origin}\n#{route_destiny}\n
+      #{departure_date}\n#{return_date}")
+
+    copia = File.read("ticket_search.rb").split("class TicketSearchTest").first
+
+    File.write("copia.rb", copia)
+
+    $stdin.reopen("respostas.txt")
+
+    resultado = `ruby copia.rb`
+
+    File.delete("copia.rb","respostas.txt")
+
+    assert_equal(true, resultado.include?("Data de Partida: 01/03/2025"))
+    assert_equal(true, resultado.include?("Data de Retorno: 01/03/2026"))
   end
 end
