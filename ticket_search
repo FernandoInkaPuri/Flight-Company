@@ -108,11 +108,11 @@ def run_tests
 
     File.write("respostas.txt", "#{name}\n#{option}\n#{route_origin}\n#{route_destiny}\n#{departure_date}\n#{return_date}")
 
-    copia = File.read("ticket_search.rb").split("class TicketSearchTest").first
+    copia = File.read("ticket_search")
 
     File.write("copia.rb", copia)
 
-    $stdin.reopen("respostas.txt")
+    $stdin.reopen("respostas.txt") #
 
     resultado = `ruby copia.rb`
 
@@ -127,7 +127,7 @@ def run_tests
   test_names = ['test_valid_date', 'test_invalid_date', 'test_input_values']
   test_names.each { |name| suite << Test::Unit::TestCase.new(name) }
 
-  runner =  Test::Unit::UI::Console::TestRunner.new(suite)
+  runner = Test::Unit::UI::Console::TestRunner.new(suite)
   runner.start
 end
 
