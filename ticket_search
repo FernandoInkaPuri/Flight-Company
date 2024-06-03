@@ -69,6 +69,7 @@ class TicketSearch
           Data de Retorno: #{@return_date.empty? ? "Não informado": @return_date}
         "
         one_way_search_travel
+        # roudtrip_search_travel
         break
       elsif op == 2
         puts 'A Hawks linhas aéreas agradece sua presença! Até outros vôos!'
@@ -80,13 +81,30 @@ class TicketSearch
   end
 
   def self.one_way_search_travel
-    uri = URI("https://sky-scanner3.p.rapidapi.com/flights/search-one-way?fromEntityId=#{@route_origin}&toEntityId=#{@route_destiny}&departDate=#{@departure_date}")
+    departure_date = @departure_date.split('/').reverse.join('-')
+    return_date = @return_date.split('/').reverse.join('-')
+
+    uri = URI("https://sky-scanner3.p.rapidapi.com/flights/search-one-way?fromEntityId=#{@route_origin}&toEntityId=#{@route_destiny}&departDate=#{departure_date}")
+    header = {'x-rapidapi-key': '8121da7ecdmsh0722f9a2ca505b5p1c61f8jsn30b344742b55'}
+
+    response = Net::HTTP.get(uri, headers = header)
+    puts response
+  end
+
+  def self.roudtrip_search_travel
+    departure_date = @departure_date.split('/').reverse.join('-')
+    return_date = @return_date.split('/').reverse.join('-')
+
+    uri = URI("https://sky-scanner3.p.rapidapi.com/flights/search-roundtrip?fromEntityId=#{@route_origin}&toEntityId=#{@route_destiny}&departDate=#{departure_date}&returnDate=#{return_date}")
     header = {'x-rapidapi-key': '8121da7ecdmsh0722f9a2ca505b5p1c61f8jsn30b344742b55'}
     response = Net::HTTP.get(uri, headers = header)
     puts response
   end
-end
 
+  def format_travel_response(response)
+
+  end
+end
 
 def run_tests
   def test_valid_date
