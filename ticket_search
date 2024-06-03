@@ -8,6 +8,7 @@ require 'test/unit/ui/testrunnerutilities'
 require 'pry'
 require 'open3'
 require 'net/http'
+require 'json'
 
 include Test::Unit::Assertions
 
@@ -88,7 +89,9 @@ class TicketSearch
     header = {'x-rapidapi-key': '8121da7ecdmsh0722f9a2ca505b5p1c61f8jsn30b344742b55'}
 
     response = Net::HTTP.get(uri, headers = header)
-    puts response
+    flights = format_travel_response(response)
+    puts "Voos de #{@route_origin} para #{@route_destiny} disponíveis: "
+    puts flights
   end
 
   def self.roudtrip_search_travel
@@ -97,12 +100,17 @@ class TicketSearch
 
     uri = URI("https://sky-scanner3.p.rapidapi.com/flights/search-roundtrip?fromEntityId=#{@route_origin}&toEntityId=#{@route_destiny}&departDate=#{departure_date}&returnDate=#{return_date}")
     header = {'x-rapidapi-key': '8121da7ecdmsh0722f9a2ca505b5p1c61f8jsn30b344742b55'}
-    response = Net::HTTP.get(uri, headers = header)
-    puts response
   end
 
-  def format_travel_response(response)
-
+  def self.format_travel_response(response)
+    json = JSON.parse(response)
+    flights = []
+    json['data']['itineraries'].each do |itinerary|
+      company_name = itinerary['legs'][0]['carriers']['marketing'][0]['name']
+      price = itinerary['price']['formatted']
+      flights << "Empresa #{company_name}, preço: #{price}"
+    end
+    flights
   end
 end
 
