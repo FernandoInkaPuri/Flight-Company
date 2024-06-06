@@ -1,0 +1,172 @@
+#!/usr/bin/env ruby
+require 'date'
+require 'test/unit'
+require 'test/unit/assertions'
+require 'test/unit/ui/console/testrunner'
+require 'test/unit/ui/testrunnermediator'
+require 'test/unit/ui/testrunnerutilities'
+require 'pry'
+require 'open3'
+require 'net/http'
+require 'json'
+
+include Test::Unit::Assertions
+
+class TicketSearch
+  def self.date_valid?(date)
+    begin
+      Date.parse(date)
+      true
+    rescue
+      false
+    end
+  end
+
+  def self.menu
+    puts "Bem Vindo à Hawks Linhas Aéreas!"
+    puts "Por favor digite seu nome: "
+
+    @user_name = gets.chomp
+
+    puts "Olá #{@user_name}, estamos felizes em ver seu interesse em viajar conosco!"
+
+    while true
+      puts "Selecione uma opção do menu abaixo: "
+      puts "1 - Buscar passagens \n2 - Sair"
+      op = gets.chomp.to_i
+      if op == 1
+        puts "Para realizar a busca das passagens aéres, por favor preencha as informações abaixo: "
+
+        puts "Qual é o aeroporto de origem? "
+        @route_origin = gets.chomp
+
+        puts "Qual é o aeroporto de destino? "
+        @route_destiny = gets.chomp
+
+        puts "Digite a data que deseja viajar (exemplo: 25/01/2025):"
+
+        @departure_date = gets.chomp.gsub(' ','')
+
+        unless TicketSearch.date_valid?(@departure_date)
+          puts "Informação inválida. Por favor digite uma data!"
+          next
+        end
+
+        puts "Digite a data de retorno (exemplo: 10/03/2025). Caso não queira pesquisar passagens "\
+        "para a volta, apenas digite enter:"
+
+        @return_date = gets.chomp.gsub(' ','')
+        date_valid = TicketSearch.date_valid?(@return_date)
+
+        if !date_valid && !@return_date.empty?
+          puts "Informação inválida. Por favor digite uma data!"
+          next
+        end
+
+        puts "Os dados para busca da passagem são:
+          Aeroporto de origem: #{@route_origin}
+          Aeroporto de destino: #{@route_destiny}
+          Data de Partida: #{@departure_date}
+          Data de Retorno: #{@return_date.empty? ? "Não informado": @return_date}
+        "
+        one_way_search_travel
+        # roudtrip_search_travel
+        break
+      elsif op == 2
+        puts 'A Hawks linhas aéreas agradece sua presença! Até outros vôos!'
+        exit
+      else
+        puts 'Por favor selecione uma opção válida no menu!'
+      end
+    end
+  end
+
+  def self.one_way_search_travel
+    departure_date = @departure_date.split('/').reverse.join('-')
+    return_date = @return_date.split('/').reverse.join('-')
+
+    uri = URI("https://sky-scanner3.p.rapidapi.com/flights/search-one-way?fromEntityId=#{@route_origin}&toEntityId=#{@route_destiny}&departDate=#{departure_date}")
+    header = {'x-rapidapi-key': '8121da7ecdmsh0722f9a2ca505b5p1c61f8jsn30b344742b55'}
+
+    response = Net::HTTP.get(uri, headers = header)
+    flights = format_travel_response(response)
+    puts "Voos de #{@route_origin} para #{@route_destiny} disponíveis: "
+    puts flights
+  end
+
+  def self.roudtrip_search_travel
+    departure_date = @departure_date.split('/').reverse.join('-')
+    return_date = @return_date.split('/').reverse.join('-')
+
+    uri = URI("https://sky-scanner3.p.rapidapi.com/flights/search-roundtrip?fromEntityId=#{@route_origin}&toEntityId=#{@route_destiny}&departDate=#{departure_date}&returnDate=#{return_date}")
+    header = {'x-rapidapi-key': '8121da7ecdmsh0722f9a2ca505b5p1c61f8jsn30b344742b55'}
+  end
+
+  def self.show_flights
+    flights = format_travel_response(response)
+    puts "Voos de #{@route_origin} para #{@route_destiny} disponíveis: "
+    puts flights
+  end
+
+  def self.format_travel_response(response)
+    json = JSON.parse(response)
+    flights = []
+
+    binding.pry
+
+    json['data']['itineraries'].each do |itinerary|
+      company_name = itinerary['legs'][0]['carriers']['marketing'][0]['name']
+      price = itinerary['price']['formatted']
+      flights << "Empresa #{company_name}, preço: #{price}"
+    end
+    flights
+  end
+end
+
+def run_tests
+  def test_valid_date
+    date = TicketSearch.date_valid?('09/02/1998')
+
+    assert_equal(true, date, 'teste bem sucedido')
+  end
+
+  def test_invalid_date
+    nonexistent_date = TicketSearch.date_valid?('70/30/2024')
+    typed_text = TicketSearch.date_valid?('Osasco')
+    typed_number = TicketSearch.date_valid?('1234567')
+
+    assert_equal(false, nonexistent_date)
+    assert_equal(false, typed_text)
+    assert_equal(false, typed_number)
+  end
+
+  def test_input_values
+    name = 'Fernando'
+    option = '1'
+    @route_origin = 'GRU'
+    @route_destiny = 'JPN'
+    @departure_date = '01/03/2025'
+    @return_date = '01/03/2026'
+
+    typed_inputs = StringIO.new("#{name}\n#{option}\n#{@route_origin}\n#{@route_destiny}\n#{@departure_date}\n#{@return_date}")
+    resultado, status = Open3.capture2("ruby ticket_search", :stdin_data=> typed_inputs)
+
+    assert_equal(true, resultado.include?("Data de Partida: 01/03/2025"))
+    assert_equal(true, resultado.include?("Data de Retorno: 01/03/2026"))
+  end
+
+  suite = Test::Unit::TestSuite.new
+
+  test_names = ['test_valid_date', 'test_invalid_date', 'test_input_values']
+  test_names.each { |name| suite << Test::Unit::TestCase.new(name) }
+
+  runner = Test::Unit::UI::Console::TestRunner.new(suite)
+  runner.start
+end
+
+if ARGV.include?('--tests')
+  ARGV.delete('--tests')
+  run_tests
+else
+  TicketSearch.menu
+end
