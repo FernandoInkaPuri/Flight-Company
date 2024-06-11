@@ -108,11 +108,7 @@ class TicketSearch
 
   def self.show_flights(response)
     flights = format_travel_response(response)
-    puts "Voos de #{@route_origin} para #{@route_destiny} "
-
-    flights[:one_way].each_with_index do |e,i|
-      puts e, flights[:roundtrip][i]
-    end
+    puts "Voos de #{@route_origin} para #{@route_destiny} disponíveis:"
 
     if @return_date.empty?
       puts flights[:one_way]
