@@ -108,27 +108,25 @@ class TicketSearch
 
   def self.show_flights(response)
     flights = format_travel_response(response)
-    puts "Voos de #{@route_origin} para #{@route_destiny} disponíveis na data de #{@departure_date}: "
-    puts flights[:ida]
+    puts "Voos de #{@route_origin} para #{@route_destiny} "
 
-    if flights[:volta].any?
-      puts "Voos de #{@route_destiny} para #{@route_origin} disponíveis na data de #{@return_date}: "
-      puts flights[:volta]
+    flights[:one_way].each_with_index do |e,i|
+      puts e, flights[:roundtrip][i]
     end
-    # binding.pry
+
+    if @return_date.empty?
+      puts flights[:one_way]
+    else
+      flights[:roundtrip][:departure].each_with_index do |e,i|
+        puts e, flights[:roundtrip][:return][i]
+      end
+    end
   end
 
   def self.format_travel_response(response)
     json = JSON.parse(response)
-    # flights = []
 
-    # json['data']['itineraries'].each do |itinerary|
-    #   company_name = itinerary['legs'][0]['carriers']['marketing'][0]['name']
-    #   price = itinerary['price']['formatted']
-    #   flights << "Empresa #{company_name}, preço: #{price}"
-    # end
-
-    flights = { ida: [], volta:[] }
+    flights = { one_way: [], roundtrip: { departure: [], return: [] } }
 
     json['data']['itineraries'].each do |itinerary|
       price = itinerary['price']['formatted']
@@ -137,12 +135,13 @@ class TicketSearch
         company_name = leg['carriers']['marketing'][0]['name']
         departure_time = Time.new(leg['departure']).strftime('%H:%M')
         arrival_time = Time.new(leg['arrival']).strftime('%H:%M')
-        # binding.pry
 
-        if index == 0
-          flights[:ida] << "Empresa #{company_name}, preço: #{price}, horário de partida: #{departure_time}, previsão de chegada: #{arrival_time}"
+        if itinerary['legs'].size == 1
+          flights[:one_way] << "Empresa #{company_name}, horário de partida: #{departure_time}, previsão de chegada: #{arrival_time}, preço: #{price}"
+        elsif index == 0
+          flights[:roundtrip][:departure] << "Empresa #{company_name}, horário de partida: #{departure_time}, previsão de chegada: #{arrival_time}"
         elsif index == 1
-          flights[:volta] << "Empresa #{company_name}, preço: #{price}, horário de partida: #{departure_time}, previsão de chegada: #{arrival_time}"
+          flights[:roundtrip][:return] << "Retorno: Empresa #{company_name}, horário de partida: #{departure_time}, previsão de chegada: #{arrival_time}, preço total da viagem: #{price}"
         end
       end
     end
