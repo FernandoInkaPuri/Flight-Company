@@ -33,8 +33,12 @@ class TicketSearch
     while true
       puts "Selecione uma opção do menu abaixo: "
       puts "1 - Buscar passagens \n2 - Sair"
-      op = gets.chomp.to_i
-      if op == 1
+      op = gets.chomp
+      options = { search: '1', exit: '2' }
+
+      options.each { |key, value| op.define_singleton_method("#{key}?") { op == value ? true : false } }
+
+      if op.search?
         puts "Para realizar a busca das passagens aéres, por favor preencha as informações abaixo: "
 
         puts "Qual é o aeroporto de origem? "
@@ -72,10 +76,10 @@ class TicketSearch
         if @return_date.empty?
           one_way_search_travel
         else
-          roudtrip_search_travel
+          roundtrip_search_travel
         end
         break
-      elsif op == 2
+      elsif op.exit?
         puts 'A Hawks linhas aéreas agradece sua presença! Até outros vôos!'
         exit
       else
@@ -85,22 +89,21 @@ class TicketSearch
   end
 
   def self.one_way_search_travel
-    departure_date = @departure_date.split('/').reverse.join('-')
-    return_date = @return_date.split('/').reverse.join('-')
+    departure_date = Date.parse(@departure_date).strftime('%Y-%m-%d')
 
     uri = URI("https://sky-scanner3.p.rapidapi.com/flights/search-one-way?fromEntityId=#{@route_origin}&toEntityId=#{@route_destiny}&departDate=#{departure_date}")
-    header = {'x-rapidapi-key': '8121da7ecdmsh0722f9a2ca505b5p1c61f8jsn30b344742b55'}
+    header = {'x-rapidapi-key': ENV['RAPID_APIKEY']}
 
     response = Net::HTTP.get(uri, headers = header)
     show_flights(response)
   end
 
-  def self.roudtrip_search_travel
-    departure_date = @departure_date.split('/').reverse.join('-')
-    return_date = @return_date.split('/').reverse.join('-')
+  def self.roundtrip_search_travel
+    departure_date = Date.parse(@departure_date).strftime('%Y-%m-%d')
+    return_date = Date.parse(@return_date).strftime('%Y-%m-%d')
 
     uri = URI("https://sky-scanner3.p.rapidapi.com/flights/search-roundtrip?fromEntityId=#{@route_origin}&toEntityId=#{@route_destiny}&departDate=#{departure_date}&returnDate=#{return_date}")
-    header = {'x-rapidapi-key': '8121da7ecdmsh0722f9a2ca505b5p1c61f8jsn30b344742b55'}
+    header = {'x-rapidapi-key': ENV['RAPID_APIKEY']}
 
     response = Net::HTTP.get(uri, headers = header)
     show_flights(response)
@@ -113,9 +116,8 @@ class TicketSearch
     if @return_date.empty?
       puts flights[:one_way]
     else
-      flights[:roundtrip][:departure].each_with_index do |e,i|
-        puts e, flights[:roundtrip][:return][i]
-      end
+      puts flights[:roundtrip][:departure]
+      .zip(flights[:roundtrip][:return])
     end
   end
 
@@ -165,16 +167,17 @@ def run_tests
   def test_input_values
     name = 'Fernando'
     option = '1'
-    @route_origin = 'GRU'
-    @route_destiny = 'JPN'
-    @departure_date = '01/03/2025'
-    @return_date = '01/03/2026'
+    route_origin = 'GRU'
+    route_destiny = 'LIS'
+    departure_date = Date.today.next_month.strftime('%d/%m/%Y')
+    return_date = Date.today.next_month(2).strftime('%d/%m/%Y')
 
-    typed_inputs = StringIO.new("#{name}\n#{option}\n#{@route_origin}\n#{@route_destiny}\n#{@departure_date}\n#{@return_date}")
-    resultado, status = Open3.capture2("ruby ticket_search", :stdin_data=> typed_inputs)
+    typed_inputs = StringIO.new("#{name}\n#{option}\n#{route_origin}\n#{route_destiny}\n#{departure_date}\n#{return_date}")
+    resultado, status = Open3.capture2("./ticket_search", :stdin_data=> typed_inputs)
 
-    assert_equal(true, resultado.include?("Data de Partida: 01/03/2025"))
-    assert_equal(true, resultado.include?("Data de Retorno: 01/03/2026"))
+    assert_equal(true, resultado.include?("Empresa"))
+    assert_equal(true, resultado.include?("horário de partida:"))
+    assert_equal(true, resultado.include?("previsão de chegada:"))
   end
 
   suite = Test::Unit::TestSuite.new
