@@ -184,20 +184,31 @@ class Tests
     end
 
     def run_tests
-      suite = Test::Unit::TestSuite.new
-      test_names = ['test_valid_date', 'test_invalid_date', 'test_input_values']
+      # suite = Test::Unit::TestSuite.new
+      # test_names = ['test_valid_date', 'test_invalid_date', 'test_input_values']
+      # test_names.each do |name|
+      #   test_case = Test::Unit::TestCase.new("Tests.#{name}")
+      #   binding.pry
+      #   # test_case.define_singleton_method(:"#{name}") { Tests.test_valid_date.clone }
+      #   suite << test_case
+      # end
       # binding.pry
-      test_names.each { |name| suite << Test::Unit::TestCase.new("#{name}") }
 
-      runner = Test::Unit::UI::Console::TestRunner.new(suite)
-      runner.start
+      # runner = Test::Unit::UI::Console::TestRunner.new(suite)
+      # runner.start
+      self.class_eval do
+        def self.suite
+          Test::Unit::TestCase.suite
+        end
+      end
+      Test::Unit::TestCase::DESCENDANTS << self
+      binding.pry
     end
   end
 end
 
 if ARGV.include?('--tests')
   ARGV.delete('--tests')
-  binding.pry
   Tests.run_tests
 else
   Terminal.menu
