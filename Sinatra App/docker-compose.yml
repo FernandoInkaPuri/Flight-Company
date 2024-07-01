@@ -1,0 +1,7 @@
+services:
+  web:
+    build: .
+    command: bash -c "ruby hello.rb -p 4567 -o '0.0.0.0'"
+    ports:
+      - "4567:4567"
+
