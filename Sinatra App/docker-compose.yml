@@ -5,3 +5,13 @@ services:
     ports:
       - "4567:4567"
 
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_USER=sinatra
+      - POSTGRES_PASSWORD=sinatra
+    depends_on:
+      - web
+    ports:
+      - "5432:5432"
+

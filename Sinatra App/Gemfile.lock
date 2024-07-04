@@ -1,0 +1,69 @@
+GIT
+  remote: https://github.com/sinatra/sinatra.git
+  revision: 5640495babcb4cfd69ba650b293660b7446402da
+  specs:
+    rack-protection (4.0.0)
+      base64 (>= 0.1.0)
+      rack (>= 3.0.0, < 4)
+    sinatra (4.0.0)
+      mustermann (~> 3.0)
+      rack (>= 3.0.0, < 4)
+      rack-protection (= 4.0.0)
+      rack-session (>= 2.0.0, < 3)
+      tilt (~> 2.0)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    activemodel (7.1.3.4)
+      activesupport (= 7.1.3.4)
+    activerecord (7.1.3.4)
+      activemodel (= 7.1.3.4)
+      activesupport (= 7.1.3.4)
+      timeout (>= 0.4.0)
+    activesupport (7.1.3.4)
+      base64
+      bigdecimal
+      concurrent-ruby (~> 1.0, >= 1.0.2)
+      connection_pool (>= 2.2.5)
+      drb
+      i18n (>= 1.6, < 2)
+      minitest (>= 5.1)
+      mutex_m
+      tzinfo (~> 2.0)
+    base64 (0.2.0)
+    bigdecimal (3.1.8)
+    concurrent-ruby (1.3.3)
+    connection_pool (2.4.1)
+    drb (2.2.1)
+    i18n (1.14.5)
+      concurrent-ruby (~> 1.0)
+    minitest (5.24.1)
+    mustermann (3.0.0)
+      ruby2_keywords (~> 0.0.1)
+    mutex_m (0.2.0)
+    pg (1.5.6)
+    rack (3.1.6)
+    rack-session (2.0.0)
+      rack (>= 3.0.0)
+    rake (13.2.1)
+    ruby2_keywords (0.0.5)
+    sinatra-activerecord (2.0.27)
+      activerecord (>= 4.1)
+      sinatra (>= 1.0)
+    tilt (2.4.0)
+    timeout (0.4.1)
+    tzinfo (2.0.6)
+      concurrent-ruby (~> 1.0)
+
+PLATFORMS
+  x86_64-linux
+
+DEPENDENCIES
+  pg
+  rake
+  sinatra!
+  sinatra-activerecord
+
+BUNDLED WITH
+   2.4.19
