@@ -1,0 +1,7 @@
+<h2> Resultado da Busca: </h2>
+
+<% @result.each do |flight| %>
+  <p>Partida: <%= flight.first %></p>
+  <p>Retorno: <%= flight.last %></p>
+  <br>
+<% end %>
