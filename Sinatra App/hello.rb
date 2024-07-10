@@ -1,6 +1,9 @@
 require 'sinatra'
 require 'byebug'
 require 'net/http'
+
+require 'sinatra/activerecord'
+
 class TicketSearch
   def self.search(params)
     @route_origin = params[:route_origin]
@@ -65,6 +68,6 @@ end
 
 post '/search' do
   @result = TicketSearch.search(params)
-
+  byebug
   erb :search
 end

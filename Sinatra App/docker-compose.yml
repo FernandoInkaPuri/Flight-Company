@@ -1,17 +1,26 @@
 services:
-  web:
-    build: .
-    command: bash -c "ruby hello.rb -p 4567 -o '0.0.0.0'"
+  sinatra_app:
+    container_name: sinatra_app
+    working_dir: /sinatra_app
+    image: ruby:3.2.3
+    command: bash -c "bundle install && bundle exec ruby hello.rb -p 4567 -o '0.0.0.0'"
     ports:
       - "4567:4567"
+    volumes:
+      - .:/sinatra_app
+      - gems:/usr/local/bundle
+    links:
+      - "db"
 
   db:
     image: postgres
+    volumes:
+      - database:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=sinatra
       - POSTGRES_PASSWORD=sinatra
-    depends_on:
-      - web
-    ports:
-      - "5432:5432"
+volumes:
+  database:
+  gems:
+
 
