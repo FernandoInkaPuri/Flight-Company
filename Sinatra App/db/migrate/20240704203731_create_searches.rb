@@ -1,4 +1,4 @@
-class CreateSearches < ActiveRecord::Migration[7.1]
+class CreateSearches < ActiveRecord::Migration
   def change
     create_table :searches do |t|
       t.string :route_origin

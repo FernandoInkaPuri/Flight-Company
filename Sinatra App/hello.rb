@@ -3,6 +3,8 @@ require 'byebug'
 require 'net/http'
 
 require 'sinatra/activerecord'
+require './models/search.rb'
+set :database_file, "./config/database.yml"
 
 class TicketSearch
   def self.search(params)
@@ -15,7 +17,7 @@ class TicketSearch
     return_date = Date.parse(@return_date).strftime('%Y-%m-%d')
 
     uri = URI("https://sky-scanner3.p.rapidapi.com/flights/search-roundtrip?fromEntityId=#{@route_origin}&toEntityId=#{@route_destiny}&departDate=#{departure_date}&returnDate=#{return_date}")
-    header = {'x-rapidapi-key': ENV['RAPID_APIKEY']}
+    header = {'x-rapidapi-key': "#{ENV['RAPID_APIKEY']}" }
 
     response = Net::HTTP.get(uri, headers = header)
     # byebug
@@ -25,6 +27,7 @@ class TicketSearch
   def self.show_flights(response)
     flights = format_travel_response(response)
     puts "Voos de #{@route_origin} para #{@route_destiny} disponíveis:"
+    save_search(@route_origin, @route_destiny, @departure_date, @return_date)
 
     if @return_date.empty?
       flights[:one_way]
@@ -38,7 +41,7 @@ class TicketSearch
     json = JSON.parse(response)
 
     flights = { one_way: [], roundtrip: { departure: [], return: [] } }
-
+    puts json
     json['data']['itineraries'].each do |itinerary|
       price = itinerary['price']['formatted']
 
@@ -58,6 +61,14 @@ class TicketSearch
     end
     flights
   end
+
+  def self.save_search(route_origin, route_destiny, departure_date, return_date)
+    Search.create(
+      route_origin: route_origin,
+      route_destiny: route_destiny,
+      departure_date: departure_date,
+      return_date: return_date)
+  end
 end
 
 
@@ -68,6 +79,10 @@ end
 
 post '/search' do
   @result = TicketSearch.search(params)
-  byebug
   erb :search
+end
+
+get '/searches' do
+  @searches = Search.all
+  erb :show
 end

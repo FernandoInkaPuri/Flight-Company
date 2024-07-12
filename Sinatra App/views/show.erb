@@ -1,0 +1,18 @@
+<h2> Lista de todas pesquisas já feitas: </h2>
+
+<% @searches.each do |search| %>
+  <table>
+  <tr>
+    <th>Partida</th>
+    <th>Retorno</th>
+    <th>Data de Ida</th>
+    <th>Data de Retorno</th>
+  </tr>
+  <tr>
+    <td><%= search.route_origin %></td>
+    <td><%= search.route_destiny %></td>
+    <td><%= search.departure_date %></td>
+    <td><%= search.return_date %></td>
+  </tr>
+  </table>
+<% end %>

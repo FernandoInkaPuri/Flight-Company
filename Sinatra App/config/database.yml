@@ -1,7 +1,11 @@
 default: &default
   adapter: postgresql
   encoding: unicode
+  host: sinatra_db
+  username: 'sinatra'
+  password: 'sinatra'
   pool: 5
+  timeout: 5000
 
 development:
   <<: *default
