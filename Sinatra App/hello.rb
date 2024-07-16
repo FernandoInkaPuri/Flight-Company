@@ -6,6 +6,10 @@ require 'sinatra/activerecord'
 require './models/search.rb'
 set :database_file, "./config/database.yml"
 
+before do
+  cache_control :public, :must_revalidate, :max_age => 10
+end
+
 class TicketSearch
   def self.search(params)
     @route_origin = params[:route_origin]

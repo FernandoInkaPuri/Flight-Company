@@ -1,15 +1,31 @@
-<h1> Bem vindos à Hawks linhas aéreas! </h1>
-<h3> Por favor, preencha com as informações para a busca da passagem </h3>
-<form action='/search' method='post'>
-  <label> Aeroporto de partida </label><br>
-  <input type='text' id='route_origin' name='route_origin'><br>
-  <label> Aeroporto de Destino </label><br>
-  <input type='text' id='route_destiny' name='route_destiny'><br>
-  <label> Data de partida </label><br>
-  <input type='text' id='departure_date' name='departure_date'><br>
-  <label> Data de retorno </label><br>
-  <input type='text' id='return_date' name='return_date'><br>
-  <input type='submit' value='Enviar'>
-<form>
 
-<p>Caso queira ver a lista de todas as pesquisas feitas <a href="/searches">clique aqui</a></p>
+
+<head>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+  <nav>
+    <div class="logo-image"></div>
+    <div><strong><a href="/searches">Histórico de Pesquisas</strong></a></div>
+  </nav>
+
+  <div class='page-content'>
+    <h1> Bem vindos à Hawks linhas aéreas! </h1><br>
+    <h3> Por favor, preencha com as informações para a busca da passagem </h3>
+    <form action='/search' method='post'>
+      <label> Aeroporto de partida </label><br>
+      <input type='text' id='route_origin' name='route_origin'><br>
+      <label> Aeroporto de Destino </label><br>
+      <input type='text' id='route_destiny' name='route_destiny'><br>
+      <label> Data de partida </label><br>
+      <input type='text' id='departure_date' name='departure_date'><br>
+      <label> Data de retorno </label><br>
+      <input type='text' id='return_date' name='return_date'><br>
+      <input type='submit' value='Enviar'>
+    <form>
+
+    <p>Caso queira ver a lista de todas as pesquisas feitas <a href="/searches">clique aqui</a></p>
+  </div>
+</body>
+
