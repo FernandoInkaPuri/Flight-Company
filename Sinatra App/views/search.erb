@@ -1,7 +1,11 @@
 <h2> Resultado da Busca: </h2>
 
 <% @result.each do |flight| %>
-  <p>Partida: <%= flight.first %></p>
-  <p>Retorno: <%= flight.last %></p>
-  <br>
+  <% if flight.class == Array %>
+    <p>Partida: <%= flight.first %></p>
+    <p>Retorno: <%= flight.last %></p>
+    <br>
+  <% else %>
+    <p><%= flight %></p>
+  <% end %>
 <% end %>

@@ -17,20 +17,39 @@ class TicketSearch
     @departure_date = params[:departure_date]
     @return_date = params[:return_date]
 
+    if @return_date.empty?
+      one_way_search_travel
+    else
+      roundtrip_search_travel
+    end
+  end
+
+  def self.one_way_search_travel
+    departure_date = Date.parse(@departure_date).strftime('%Y-%m-%d')
+
+    uri = URI("https://sky-scanner3.p.rapidapi.com/flights/search-one-way?fromEntityId=#{@route_origin}&toEntityId=#{@route_destiny}&departDate=#{departure_date}")
+    header = {'x-rapidapi-key': ENV['RAPID_APIKEY']}
+
+    response = Net::HTTP.get(uri, headers = header)
+    show_flights(response)
+  end
+
+  def self.roundtrip_search_travel
     departure_date = Date.parse(@departure_date).strftime('%Y-%m-%d')
     return_date = Date.parse(@return_date).strftime('%Y-%m-%d')
 
     uri = URI("https://sky-scanner3.p.rapidapi.com/flights/search-roundtrip?fromEntityId=#{@route_origin}&toEntityId=#{@route_destiny}&departDate=#{departure_date}&returnDate=#{return_date}")
-    header = {'x-rapidapi-key': "#{ENV['RAPID_APIKEY']}" }
+    header = {'x-rapidapi-key': ENV['RAPID_APIKEY']}
 
     response = Net::HTTP.get(uri, headers = header)
-    # byebug
+
     show_flights(response)
   end
 
+
   def self.show_flights(response)
     flights = format_travel_response(response)
-    puts "Voos de #{@route_origin} para #{@route_destiny} disponíveis:"
+
     save_search(@route_origin, @route_destiny, @departure_date, @return_date)
 
     if @return_date.empty?
