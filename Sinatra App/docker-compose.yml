@@ -1,0 +1,39 @@
+services:
+  sinatra_app:
+    container_name: sinatra_app
+    working_dir: /sinatra_app
+    image: ruby:3.2.3
+    environment:
+      RAPID_APIKEY: '78d68875c3msh31247b0bb2d1b85p14069ejsnc00771ba5d18'
+    command: bash -c "bundle install && bundle exec rackup -p 4567 -o '0.0.0.0'"
+    ports:
+      - "4567:4567"
+    volumes:
+      - .:/sinatra_app
+      - gems:/usr/local/bundle
+    depends_on:
+      - db
+    networks:
+      - sinatra_network
+
+  db:
+    container_name: sinatra_db
+    hostname: sinatra_db
+    image: postgres:16
+    volumes:
+      - database:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: sinatra
+      POSTGRES_PASSWORD: sinatra
+      POSTGRES_DB: postgres
+    networks:
+      - sinatra_network
+    ports:
+    - "5432:5432"
+volumes:
+  database:
+  gems:
+
+networks:
+  sinatra_network:
+    name: sinatra_network
