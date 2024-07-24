@@ -5,17 +5,34 @@ require 'net/http'
 require 'sinatra/activerecord'
 require './models/search.rb'
 set :database_file, "./config/database.yml"
+# set :show_exceptions, :after_handler
 
 before do
   cache_control :public, :must_revalidate, :max_age => 10
 end
 
+# class CustomError < Exception
+# end
+
 class TicketSearch
+  def self.date_valid?(date)
+    begin
+      Date.parse(date)
+      true
+    rescue
+      false
+    end
+  end
+
   def self.search(params)
     @route_origin = params[:route_origin]
     @route_destiny = params[:route_destiny]
     @departure_date = params[:departure_date]
     @return_date = params[:return_date]
+
+    unless TicketSearch.date_valid?(@departure_date)
+      raise StandardError, 'Por favor, informe uma data válida!'
+    end
 
     if @return_date.empty?
       one_way_search_travel
@@ -94,14 +111,16 @@ class TicketSearch
   end
 end
 
-
-
 get '/' do
   erb :index
 end
 
 post '/search' do
-  @result = TicketSearch.search(params)
+  begin
+    @result = TicketSearch.search(params)
+  rescue StandardError => e
+    @error_message = e.message
+  end
   erb :search
 end
 
