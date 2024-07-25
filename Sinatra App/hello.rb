@@ -123,6 +123,10 @@ class TicketSearch
       departure_date: departure_date,
       return_date: return_date)
   end
+
+  def self.most_popular_destinations
+    Search.group(:route_destiny).count.sort_by {|key, value| value }.reverse
+  end
 end
 
 get '/' do
@@ -140,5 +144,8 @@ end
 
 get '/searches' do
   @searches = Search.all
+
+  @most_popular_destinations = TicketSearch.most_popular_destinations
+
   erb :show
 end
