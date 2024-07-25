@@ -59,6 +59,9 @@ tr:hover {background-color: skyblue;}
 
 .error {
   font-size: 25;
-  background-color: red;
-  color: white;
+  color: #772b35;
+  background-color: #fadddd;
+  border-color: #f8cfcf;
+  padding-top: 20px;
+  padding-bottom: 20px;
 }

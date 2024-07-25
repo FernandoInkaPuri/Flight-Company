@@ -31,7 +31,13 @@ class TicketSearch
     @return_date = params[:return_date]
 
     unless TicketSearch.date_valid?(@departure_date)
-      raise StandardError, 'Por favor, informe uma data válida!'
+      raise StandardError, 'Por favor, informe uma data válida no campo data de partida!'
+    end
+
+    return_date_valid = TicketSearch.date_valid?(@return_date)
+
+    if !return_date_valid && !@return_date.empty?
+      raise StandardError, 'Por favor, informe uma data válida no campo data de retorno!'
     end
 
     if @return_date.empty?
@@ -82,20 +88,28 @@ class TicketSearch
 
     flights = { one_way: [], roundtrip: { departure: [], return: [] } }
     puts json
-    json['data']['itineraries'].each do |itinerary|
-      price = itinerary['price']['formatted']
 
-      itinerary['legs'].each_with_index do |leg, index|
-        company_name = leg['carriers']['marketing'].first['name']
-        departure_time = Time.new(leg['departure']).strftime('%H:%M')
-        arrival_time = Time.new(leg['arrival']).strftime('%H:%M')
+    if json.include?('errors')
+      raise StandardError, 'Por favor informe um aeroporto de partida válido!' if json['errors'].include?('fromEntityId')
+      raise StandardError, 'Por favor informe um aeroporto de destino válido!' if json['errors'].include?('toEntityId')
+    end
 
-        if itinerary['legs'].size == 1
-          flights[:one_way] << "Empresa #{company_name}, horário de partida: #{departure_time}, previsão de chegada: #{arrival_time}, preço: #{price}"
-        elsif index == 0
-          flights[:roundtrip][:departure] << "Empresa #{company_name}, horário de partida: #{departure_time}, previsão de chegada: #{arrival_time} "
-        elsif index == 1
-          flights[:roundtrip][:return] << "Empresa #{company_name}, horário de partida: #{departure_time}, previsão de chegada: #{arrival_time}, preço total da viagem: #{price}"
+    if json['data']&.has_key?('itineraries')
+      json['data']['itineraries'].each do |itinerary|
+        price = itinerary['price']['formatted']
+
+        itinerary['legs'].each_with_index do |leg, index|
+          company_name = leg['carriers']['marketing'].first['name']
+          departure_time = Time.new(leg['departure']).strftime('%H:%M')
+          arrival_time = Time.new(leg['arrival']).strftime('%H:%M')
+
+          if itinerary['legs'].size == 1
+            flights[:one_way] << "Empresa #{company_name}, horário de partida: #{departure_time}, previsão de chegada: #{arrival_time}, preço: #{price}"
+          elsif index == 0
+            flights[:roundtrip][:departure] << "Empresa #{company_name}, horário de partida: #{departure_time}, previsão de chegada: #{arrival_time} "
+          elsif index == 1
+            flights[:roundtrip][:return] << "Empresa #{company_name}, horário de partida: #{departure_time}, previsão de chegada: #{arrival_time}, preço total da viagem: #{price}"
+          end
         end
       end
     end
