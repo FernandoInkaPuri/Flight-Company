@@ -1,5 +1,7 @@
 <h2> Lista de todas pesquisas já feitas: </h2>
-<br>
+
+<p>Quer saber quais os destinos mais buscados por quem está querendo viajar? <a href='popular_destinations'> Clique aqui </a>
+<br><br><br>
 <table>
   <tr>
     <th>Partida</th>
@@ -13,20 +15,6 @@
       <td><%= search.route_destiny %></td>
       <td><%= search.departure_date %></td>
       <td><%= search.return_date %></td>
-    </tr>
-  <% end %>
-</table>
-
-<h2> Destinos mais procurados: </h2>
-<table>
-  <tr>
-    <th>Destino</th>
-    <th>Quantidades de Busca</th>
-  </tr>
-  <% @most_popular_destinations.each do |destiny| %>
-    <tr>
-      <td><%= destiny.first %></td>
-      <td><%= destiny.last %></td>
     </tr>
   <% end %>
 </table>

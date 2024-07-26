@@ -145,7 +145,11 @@ end
 get '/searches' do
   @searches = Search.all
 
+  erb :searches
+end
+
+get '/popular_destinations' do
   @most_popular_destinations = TicketSearch.most_popular_destinations
 
-  erb :show
+  erb :popular_destinations
 end

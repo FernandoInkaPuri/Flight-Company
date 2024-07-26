@@ -1,0 +1,16 @@
+<h2> Destinos mais procurados: </h2>
+<br><br>
+<table>
+  <tr>
+    <th>Destino</th>
+    <th>Quantidades de Busca</th>
+  </tr>
+  <% @most_popular_destinations.each do |destiny| %>
+    <tr>
+      <td><%= destiny.first %></td>
+      <td><%= destiny.last %></td>
+    </tr>
+  <% end %>
+</table>
+<br><br>
+<p>Para voltar a página de pesquisa <a href="/searches">clique aqui</a></p>
