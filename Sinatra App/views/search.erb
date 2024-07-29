@@ -10,13 +10,16 @@
     <p>Houve um erro na comunicação com a empresa que nos fornece os dados dos vôos. Por favor, tente novamente.</p>
   <% else %>
     <% @result.each do |flight| %>
-      <% if flight.class == Array %>
-        <p>Partida: <%= flight.first %></p>
-        <p>Retorno: <%= flight.last %></p>
+      <div class='list-tickets'>
+        <% if flight.class == Array %>
+          <p>Partida: <%= flight.first %></p>
+          <p>Retorno: <%= flight.last %></p>
+          <br>
+        <% else %>
+          <p><%= flight %></p>
+        <% end %>
         <br>
-      <% else %>
-        <p><%= flight %></p>
-      <% end %>
+      </div>
     <% end %>
   <% end %>
 <% end %>

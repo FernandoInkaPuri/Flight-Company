@@ -44,6 +44,13 @@ th, td {
 
 tr:hover {background-color: skyblue;}
 
+.list-tickets {
+  padding: 10px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+  background-color: skyblue;
+}
+
 .logo-image {
   width: 14%;
   height: 100%;
