@@ -1,3 +1,7 @@
+require './flight'
+require 'byebug'
+
+
 class TicketSearch
   def initialize(params)
     @route_origin = params[:route_origin]

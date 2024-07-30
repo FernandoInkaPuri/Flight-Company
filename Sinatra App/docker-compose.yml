@@ -11,6 +11,8 @@ services:
     volumes:
       - .:/sinatra_app
       - gems:/usr/local/bundle
+    tty: true
+    stdin_open: true
     depends_on:
       - db
     networks:

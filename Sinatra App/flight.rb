@@ -1,3 +1,8 @@
+require 'net/http'
+require './models/search.rb'
+require 'byebug'
+
+
 class Flight
   def initialize(route_origin, route_destiny, departure_date, return_date)
     @route_origin = route_origin
@@ -29,7 +34,7 @@ class Flight
   end
 
 
-  def self.show_flights(response)
+  def show_flights(response)
     flights = format_travel_response(response)
 
     Search.save_search(@route_origin, @route_destiny, @departure_date, @return_date)
@@ -42,7 +47,7 @@ class Flight
     end
   end
 
-  def self.format_travel_response(response)
+  def format_travel_response(response)
     json = JSON.parse(response)
 
     flights = { one_way: [], roundtrip: { departure: [], return: [] } }

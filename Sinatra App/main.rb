@@ -1,9 +1,9 @@
 require 'sinatra'
-require 'byebug'
-require 'net/http'
-
 require 'sinatra/activerecord'
 require './models/search.rb'
+require './ticket_search'
+require 'byebug'
+
 set :database_file, "./config/database.yml"
 
 before do
