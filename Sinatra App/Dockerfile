@@ -8,4 +8,4 @@ RUN bundle install
 
 EXPOSE 4567
 
-CMD [ "ruby", "hello.rb" ]
+CMD [ "ruby", "main.rb" ]

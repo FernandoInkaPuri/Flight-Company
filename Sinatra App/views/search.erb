@@ -1,15 +1,25 @@
 <h2> Resultado da Busca: </h2>
 
-<% if @result.empty?%>
-  <p>Houve um erro na comunicação com a empresa que nos fornece os dados dos vôos. Por favor, tente novamente.</p>
+<% if @error_message %>
+  <div class='error'>Não foi possível realizar a busca. <%= @error_message %></div>
+
+  <p>Para preencher o formulário novamente <a href="/searches">clique aqui</a></p>
+
 <% else %>
-  <% @result.each do |flight| %>
-    <% if flight.class == Array %>
-      <p>Partida: <%= flight.first %></p>
-      <p>Retorno: <%= flight.last %></p>
-      <br>
-    <% else %>
-      <p><%= flight %></p>
+  <% if @result.empty?%>
+    <p>Houve um erro na comunicação com a empresa que nos fornece os dados dos vôos. Por favor, tente novamente.</p>
+  <% else %>
+    <% @result.each do |flight| %>
+      <div class='list-tickets'>
+        <% if flight.class == Array %>
+          <p>Partida: <%= flight.first %></p>
+          <p>Retorno: <%= flight.last %></p>
+          <br>
+        <% else %>
+          <p><%= flight %></p>
+        <% end %>
+        <br>
+      </div>
     <% end %>
   <% end %>
 <% end %>
